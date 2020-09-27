@@ -33,25 +33,81 @@ function renderBoard() {
     tableBoard.append(row);
     for (let j = 0; j <= 4; j++) {
       let cell = document.createElement("td");
+      cell.setAttribute("id", "r" + i + "c" + j);
+      row.append(cell);
       cell.onclick = function () {
         if (cell.innerHTML !== "") {
           return;
         }
         cell.innerHTML = turn;
-        checkWinner(cell, i, j);
+        checkWinner(cell);
         turn = turn === x ? o : x;
       };
-      row.append(cell);
     }
   }
 }
 
-function checkWinner(cell, i, j) {
-  for (let k = -4; k <= 4; k++) {
-    let cell_i = i + k;
-    if (cell_i >= 0 && cell_i <= 4) {
-      const row = tableBoard.rows[cell_i];
-      console.log(row);
+function checkWinner(cell) {
+  let paske = cell.getAttribute("id");
+  let won = false;
+  console.log(paske);
+
+  let horisontal = 0;
+  let vertical = 0;
+  let diag1 = 0;
+  let diag2 = 0;
+  for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < 5; j++) {
+      // checking rows
+      let col = tableBoard.rows[i].cells[j];
+
+      if (col.innerText === turn) {
+        horisontal++;
+      } else {
+        horisontal = 0;
+      }
+      //checking columns
+      col = tableBoard.rows[j].cells[i];
+      if (col.innerText === turn) {
+        vertical++;
+      } else {
+        vertical = 0;
+      }
+      //diagonal left to right
+      if (i === j) {
+        col = tableBoard.rows[j].cells[i];
+        if (col.innerText === turn) {
+          diag1++;
+        } else {
+          diag1 = 0;
+        }
+      }
+      //diagonal right to left
+      if (i === j) {
+        col = tableBoard.rows[4 - j].cells[i];
+        if (col.innerText === turn) {
+          diag2++;
+        } else {
+          diag2 = 0;
+        }
+      }
+      if (horisontal === 5 || vertical === 5 || diag1 === 5 || diag2 === 5) {
+        won = true;
+        break;
+      }
+    }
+    horisontal = 0;
+    vertical = 0;
+  }
+  if (won === true) {
+    if (turn === x) {
+      alert("Player 1 won!");
+      return;
+    } else if (turn === o) {
+      alert("Player 2 won!");
+      return;
+    } else {
+      alert("error, no one won");
     }
   }
 }
